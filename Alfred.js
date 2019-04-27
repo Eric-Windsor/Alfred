@@ -53,6 +53,9 @@ var userLeaderboardDummy = {
     value: 0
 };
 
+var msglog1 = '';
+var msglog2 = '';
+
 //Initialising the counter file
 var counters = require('./counters.json');
 
@@ -91,6 +94,21 @@ client.on("message", (message) => {
     }
   }
 
+  //Auto-Chain completion
+  if(msglog1 == msglog2 && msglog2 == message.content){
+    message.channel.send(message.content);
+  }
+
+  if (msglog1 === '' && !message.content.startsWith(prefix)){
+    msglog1 = message.content;
+  } else if (msglog1 && msglog2 === '' && !message.content.startsWith(prefix)){
+    msglog2 = message.content;
+  } else if (!message.content.startsWith(prefix)){
+    msglog1 = msglog2;
+    msglog2 = message.content;
+  }
+
+  //Returning all messages that don't start with the prefix
   if(!message.content.startsWith(prefix)){
     return;
   }
@@ -99,8 +117,15 @@ client.on("message", (message) => {
   const args = message.content.slice(prefix.length).trim().split(/ +/g);
   const cmd = args.shift().toLowerCase();
 
+  //!test - the testing function
+  if (cmd === 'test'){
+    //message.channel.send(`The message logs are: ${msglog1} and ${msglog2}`);
+    var today = new Date();
+    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    message.channel.send(time);
+  }
   //!raid, to give access to a shared pom timer
-  if (cmd === 'raid'){
+  if (cmd === 'raid' || cmd === 'r'){
     message.channel.send(`To join a raid with ${message.member.displayName} and the Dream Team, click here: https://cuckoo.team/thedreamtm`);
     message.delete(200);
   }
