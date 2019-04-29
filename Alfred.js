@@ -55,6 +55,7 @@ var userLeaderboardDummy = {
 
 var msglog1 = '';
 var msglog2 = '';
+var chainParticipation = false;
 
 //Initialising the counter file
 var counters = require('./counters.json');
@@ -95,8 +96,9 @@ client.on("message", (message) => {
   }
 
   //Auto-Chain completion
-  if(msglog1 == msglog2 && msglog2 == message.content){
+  if(msglog1 == msglog2 && msglog2 == message.content && !chainParticipation){
     message.channel.send(message.content);
+    chainParticipation = true;
   }
 
   if (msglog1 === '' && !message.content.startsWith(prefix)){
@@ -106,6 +108,12 @@ client.on("message", (message) => {
   } else if (!message.content.startsWith(prefix)){
     msglog1 = msglog2;
     msglog2 = message.content;
+    chainParticipation = false;
+  }
+
+  //Lets Go Reactions for Ashlee
+  if(message.channel.name === '☄ashs-sky' && message.content.includes('/') && message.content.toLowerCase().includes('pomodoro') && message.content.toLowerCase().includes('count') && message.member.id == '530296951141564428'){
+    message.react('567562384642801664');
   }
 
   //Returning all messages that don't start with the prefix
