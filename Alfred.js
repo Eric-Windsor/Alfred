@@ -66,7 +66,7 @@ var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 client.on('ready', () => {
   //Start-up Message
   console.log(' -- READY TO RUMBLE -- ');
-  client.user.setActivity("myself", { type: "PLAYING"});
+  client.user.setActivity("with fire", { type: "PLAYING"});
 });
 
 client.on("message", (message) => {
@@ -113,7 +113,7 @@ client.on("message", (message) => {
 
   //Lets Go Reactions for Ashlee
   if(message.channel.name === '☄ashs-sky' && message.content.includes('/') && message.content.toLowerCase().includes('pomodoro') && message.content.toLowerCase().includes('count') && message.member.id == '530296951141564428'){
-    message.react('567562384642801664');
+    message.react('573727844782309377');
   }
 
   //Returning all messages that don't start with the prefix
@@ -127,10 +127,7 @@ client.on("message", (message) => {
 
   //!test - the testing function
   if (cmd === 'test'){
-    //message.channel.send(`The message logs are: ${msglog1} and ${msglog2}`);
-    var today = new Date();
-    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    message.channel.send(time);
+
   }
   //!raid, to give access to a shared pom timer
   if (cmd === 'raid' || cmd === 'r'){
@@ -227,6 +224,105 @@ client.on("message", (message) => {
 
     message.channel.send(`To Google Translate **${text}** click this link: <${link}>`);
   }
+
+  if (cmd === 'time'){
+    var today = new Date();
+    var utc = today.getTime() + (today.getTimezoneOffset() * 60000);
+
+    var utc10 = new Date(utc + (3600000*10));
+    if(utc10.getHours() > 12){
+      var time10 = utc10.getHours()-12 + ":" + utc10.getMinutes() + ":" + utc10.getSeconds() + 'pm';
+    } else {
+      var time10 = utc10.getHours() + ":" + utc10.getMinutes() + ":" + utc10.getSeconds() + 'am';
+    }
+
+    var utc4 = new Date(utc + (3600000*-4));
+    if(utc4.getHours() > 12){
+      var time4 = utc4.getHours()-12 + ":" + utc4.getMinutes() + ":" + utc4.getSeconds() + 'pm';
+    } else {
+      var time4 = utc4.getHours() + ":" + utc4.getMinutes() + ":" + utc4.getSeconds() + 'am';
+    }
+
+    var utc2 = new Date(utc + (3600000*2));
+    if(utc2.getHours() > 12){
+      var time2 = utc2.getHours()-12 + ":" + utc2.getMinutes() + ":" + utc2.getSeconds() + 'pm';
+    } else {
+      var time2 = utc2.getHours() + ":" + utc2.getMinutes() + ":" + utc2.getSeconds() + 'am';
+    }
+
+    message.channel.send({embed: {
+      color: 0xffffff,
+      title: "🕙 **Dreamer World Clock** 🕙",
+      description: "A visual display to see what time it is for your friends around the world!",
+      fields: [{
+        name: "Ash",
+        value: `Australia - ${time10}`
+      },{
+        name: "Ashley",
+        value: `USA - ${time4}`
+      },{
+        name: "Austin",
+        value: `Canada - ${time4}`
+      },{
+        name: "Eric",
+        value: `Australia - ${time10}`
+      },{
+        name: "Indira",
+        value: `Germany - ${time2}`
+      },{
+        name: "Marta",
+        value: `Spain - ${time2}`
+      }
+    ],
+      timestamp: today,
+      footer: {
+        icon_url: client.user.avatarURL,
+        text: "Alfred"
+      }
+    }});
+  }
+
+  if (cmd === 'habitica'){
+    message.channel.send("Starting!");
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', "https://habitica.com/api/v3/tasks/user", true);
+    xhr.setRequestHeader('x-api-user', '6c86e769-6127-41ab-94a9-61c30533cd8e');
+    xhr.setRequestHeader('x-api-key',  'b9408ea0-6d6a-40c2-b210-86d4ce6a8bbe');
+    xhr.send();
+    xhr.onreadystatechange = function () {
+      if(xhr.readyState == 4 && xhr.status == 200) {
+        //message.channel.send(xhr.responseText.substring(1, 2000));
+        console.log(xhr.responseText);
+        //message.channel.send("Sending message to your console!");
+        //var name = JSON.parse(xhr.responseText).data[0].text;
+        var habits = [];
+        var dailies = [];
+        var todos = [];
+        for(var num = 0; num < JSON.parse(xhr.responseText).data.length; num++){
+          if(JSON.parse(xhr.responseText).data[num].type === 'habit'){
+            habits.push(JSON.parse(xhr.responseText).data[num].text);
+          } else if (JSON.parse(xhr.responseText).data[num].type === 'daily'){
+            dailies.push(JSON.parse(xhr.responseText).data[num].text);
+          } else if (JSON.parse(xhr.responseText).data[num].type === 'todo'){
+            todos.push(JSON.parse(xhr.responseText).data[num].text);
+          }
+
+        }
+        message.channel.send(`Habits:${habits}\n\nDailies:${dailies}\n\nTo-Dos:${todos}`);
+        //message.channel.send(name);
+        //var habits = JSON.parse(xhr.responseText).tasksOrder[0];
+        //message.channel.send(habits[1]);
+
+        //message.channel.send(JSON.parse(xhr.responseText).tasksOrder.habits.toString());
+
+        //message.channel.send(xhr.responseText.substring(1,2000));
+        //message.channel.send(xhr.responseText.substring(2000,4000));
+        //message.channel.send(xhr.responseText.substring(6000,8000));
+        //var count = JSON.parse(xhr.responseText).data.memberCount;
+        //message.channel.send(`The current member count for the KOA Guild is: ${count}`);
+        return;
+      }
+    }
 
   ////////////////////////////////////////////////
   //           POM LEADERBOARD COMMANDS         //
@@ -400,47 +496,6 @@ client.on("message", (message) => {
           }
       }
   }
-  if (cmd === 'habitica'){
-    message.channel.send("Starting!");
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', "https://habitica.com/api/v3/tasks/user", true);
-    xhr.setRequestHeader('x-api-user', '6c86e769-6127-41ab-94a9-61c30533cd8e');
-    xhr.setRequestHeader('x-api-key',  'b9408ea0-6d6a-40c2-b210-86d4ce6a8bbe');
-    xhr.send();
-    xhr.onreadystatechange = function () {
-      if(xhr.readyState == 4 && xhr.status == 200) {
-        //message.channel.send(xhr.responseText.substring(1, 2000));
-        console.log(xhr.responseText);
-        //message.channel.send("Sending message to your console!");
-        //var name = JSON.parse(xhr.responseText).data[0].text;
-        var habits = [];
-        var dailies = [];
-        var todos = [];
-        for(var num = 0; num < JSON.parse(xhr.responseText).data.length; num++){
-          if(JSON.parse(xhr.responseText).data[num].type === 'habit'){
-            habits.push(JSON.parse(xhr.responseText).data[num].text);
-          } else if (JSON.parse(xhr.responseText).data[num].type === 'daily'){
-            dailies.push(JSON.parse(xhr.responseText).data[num].text);
-          } else if (JSON.parse(xhr.responseText).data[num].type === 'todo'){
-            todos.push(JSON.parse(xhr.responseText).data[num].text);
-          }
-
-        }
-        message.channel.send(`Habits:${habits}\n\nDailies:${dailies}\n\nTo-Dos:${todos}`);
-        //message.channel.send(name);
-        //var habits = JSON.parse(xhr.responseText).tasksOrder[0];
-        //message.channel.send(habits[1]);
-
-        //message.channel.send(JSON.parse(xhr.responseText).tasksOrder.habits.toString());
-
-        //message.channel.send(xhr.responseText.substring(1,2000));
-        //message.channel.send(xhr.responseText.substring(2000,4000));
-        //message.channel.send(xhr.responseText.substring(6000,8000));
-        //var count = JSON.parse(xhr.responseText).data.memberCount;
-        //message.channel.send(`The current member count for the KOA Guild is: ${count}`);
-        return;
-      }
-    }
 
   }
 
