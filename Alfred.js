@@ -323,7 +323,7 @@ client.on("message", (message) => {
         return;
       }
     }
-
+  }
   ////////////////////////////////////////////////
   //           POM LEADERBOARD COMMANDS         //
   ////////////////////////////////////////////////
@@ -495,8 +495,6 @@ client.on("message", (message) => {
               saveToDisk();
           }
       }
-  }
-
   }
 
 });
