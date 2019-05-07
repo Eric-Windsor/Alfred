@@ -76,12 +76,12 @@ client.on("message", (message) => {
     message.delete(4000);
   }
 
-  //Ignoring messages from other bots
+  //Ignoring messages from other bots or Alfred himself
   if(message.author.bot){
     return;
   }
 
-  //#General Greeting Reactions
+  //#General Reactions
   if(message.channel.name === 'general'){
     var messageText = message.content.toLowerCase();
     if(messageText.includes('morning') && !messageText.includes('?') && !messageText.includes('hope') && (messageText.includes(' all') || messageText.includes(`y'all`) || messageText.includes('everyone') || messageText.includes('everybody') || messageText.includes('guys') || messageText.includes('dreamers') || messageText.includes('friends')) && messageText.length < 75){
@@ -92,6 +92,10 @@ client.on("message", (message) => {
     if((messageText.includes('goodnight') || messageText.includes('good night')) && !messageText.includes('?') && !messageText.includes('hope') && (messageText.includes(' all') || messageText.includes(`y'all`) || messageText.includes('everyone') || messageText.includes('everybody') || messageText.includes('guys') || messageText.includes('dreamers') || messageText.includes('friends')) && messageText.length < 75){
       message.react('🌙');
       return;
+    }
+
+    if(messageText.includes('starting') && (messageText.includes('pom') || messageText.includes('round')) && !messageText.includes('?')){
+      message.react('573727844782309377')
     }
   }
 
