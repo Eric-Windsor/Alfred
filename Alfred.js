@@ -234,21 +234,21 @@ client.on("message", (message) => {
     var utc = today.getTime() + (today.getTimezoneOffset() * 60000);
 
     var utc10 = new Date(utc + (3600000*10));
-    if(utc10.getHours() > 12){
+    if(utc10.getHours() > 11){
       var time10 = utc10.getHours()-12 + ":" + utc10.getMinutes() + ":" + utc10.getSeconds() + 'pm';
     } else {
       var time10 = utc10.getHours() + ":" + utc10.getMinutes() + ":" + utc10.getSeconds() + 'am';
     }
 
     var utc4 = new Date(utc + (3600000*-4));
-    if(utc4.getHours() > 12){
+    if(utc4.getHours() > 11){
       var time4 = utc4.getHours()-12 + ":" + utc4.getMinutes() + ":" + utc4.getSeconds() + 'pm';
     } else {
       var time4 = utc4.getHours() + ":" + utc4.getMinutes() + ":" + utc4.getSeconds() + 'am';
     }
 
     var utc2 = new Date(utc + (3600000*2));
-    if(utc2.getHours() > 12){
+    if(utc2.getHours() > 11){
       var time2 = utc2.getHours()-12 + ":" + utc2.getMinutes() + ":" + utc2.getSeconds() + 'pm';
     } else {
       var time2 = utc2.getHours() + ":" + utc2.getMinutes() + ":" + utc2.getSeconds() + 'am';
