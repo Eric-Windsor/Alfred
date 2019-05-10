@@ -229,29 +229,44 @@ client.on("message", (message) => {
     message.channel.send(`To Google Translate **${text}** click this link: <${link}>`);
   }
 
+  //!time - World clock display for the Dreamer Server
   if (cmd === 'time'){
+
+    message.delete(200);
     var today = new Date();
     var utc = today.getTime() + (today.getTimezoneOffset() * 60000);
 
     var utc10 = new Date(utc + (3600000*10));
-    if(utc10.getHours() > 11){
-      var time10 = utc10.getHours()-12 + ":" + utc10.getMinutes() + ":" + utc10.getSeconds() + 'pm';
+    if(utc10.getHours() > 12){
+      var time10 = utc10.getHours()-12 + ":" + pad(utc10.getMinutes()) + ":" + pad(utc10.getSeconds()) + 'pm';
     } else {
-      var time10 = utc10.getHours() + ":" + utc10.getMinutes() + ":" + utc10.getSeconds() + 'am';
+      if(utc10.getHours() == 12){
+        var time10 = utc10.getHours() + ":" + pad(utc10.getMinutes()) + ":" + pad(utc10.getSeconds()) + 'pm';
+      } else {
+        var time10 = utc10.getHours() + ":" + pad(utc10.getMinutes()) + ":" + pad(utc10.getSeconds()) + 'am';
+      }
     }
 
     var utc4 = new Date(utc + (3600000*-4));
-    if(utc4.getHours() > 11){
-      var time4 = utc4.getHours()-12 + ":" + utc4.getMinutes() + ":" + utc4.getSeconds() + 'pm';
+    if(utc4.getHours() > 12){
+      var time4 = utc4.getHours()-12 + ":" + pad(utc4.getMinutes()) + ":" + pad(utc4.getSeconds()) + 'pm';
     } else {
-      var time4 = utc4.getHours() + ":" + utc4.getMinutes() + ":" + utc4.getSeconds() + 'am';
+      if(utc4.getHours() == 12){
+        var time4 = utc4.getHours() + ":" + pad(utc4.getMinutes()) + ":" + pad(utc4.getSeconds()) + 'pm';
+      } else {
+        var time4 = utc4.getHours() + ":" + pad(utc4.getMinutes()) + ":" + pad(utc4.getSeconds()) + 'am';
+      }
     }
 
     var utc2 = new Date(utc + (3600000*2));
-    if(utc2.getHours() > 11){
-      var time2 = utc2.getHours()-12 + ":" + utc2.getMinutes() + ":" + utc2.getSeconds() + 'pm';
+    if(utc2.getHours() > 12){
+      var time2 = utc2.getHours()-12 + ":" + pad(utc2.getMinutes()) + ":" + pad(utc2.getSeconds()) + 'pm';
     } else {
-      var time2 = utc2.getHours() + ":" + utc2.getMinutes() + ":" + utc2.getSeconds() + 'am';
+      if(utc2.getHours() == 12){
+        var time2 = utc2.getHours() + ":" + pad(utc2.getMinutes()) + ":" + pad(utc2.getSeconds()) + 'pm';
+      } else {
+        var time2 = utc2.getHours() + ":" + pad(utc2.getMinutes()) + ":" + pad(utc2.getSeconds()) + 'am';
+      }
     }
 
     message.channel.send({embed: {
@@ -513,6 +528,14 @@ function isStaff(member){
   }
 
   return false;
+}
+
+function pad(num){
+  var string = num.toString();
+  if (string.length == 1){
+    string = '0' + string;
+  }
+  return string;
 }
 
 function addCounter(id, title) {
