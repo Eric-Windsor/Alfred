@@ -53,12 +53,16 @@ var userLeaderboardDummy = {
     value: 0
 };
 
-var msglog1 = '';
-var msglog2 = '';
-var chainParticipation = false;
+var chain = {
+    authors: [],
+    messages: []
+};
 
 //Initialising the counter file
 var counters = require('./counters.json');
+
+//Initialising the chains file
+var chains = require('./chains.json');
 
 //Initialising HTTP Requests
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
@@ -74,49 +78,95 @@ client.on("message", (message) => {
   //Deleting PokéCord Messages from channels
   if(message.author.id == '365975655608745985' && message.channel.id !== '565767793627103242'){
     message.delete(4000);
+    return;
+  }
+
+  //Auto-Chaining Algorithm
+  if (!message.content.startsWith(prefix) && message.author.id !== '365975655608745985'){
+
+    //Initialising Channel File
+    var channelID = message.channel.id;
+    if (!chains[channelID]){
+      chains[channelID] = JSON.parse(JSON.stringify(chain));
+      let dataString = JSON.stringify(chains);
+      fs.writeFileSync('chains.json', dataString);
+    }
+
+    if (chains[channelID].authors.includes(message.author.id)){
+      for (var num = 0; num < chains[channelID].messages.length; num++){
+        if (message.content.toLowerCase() === chains[channelID].messages[num].toLowerCase()){
+          chains[channelID].authors.length = 0;
+          chains[channelID].messages.length = 0;
+          let dataString = JSON.stringify(chains);
+          fs.writeFileSync('chains.json', dataString);
+          return;
+        }
+      }
+      chains[channelID].authors.length = 0;
+      chains[channelID].messages.length = 0;
+      chains[channelID].authors.push(message.author.id);
+      chains[channelID].messages.push(message.content);
+      let dataString = JSON.stringify(chains);
+      fs.writeFileSync('chains.json', dataString);
+    } else {
+      for (var num = 0; num < chains[channelID].messages.length; num++){
+        if (message.content.toLowerCase() === chains[channelID].messages[num].toLowerCase()){
+          chains[channelID].authors.push(message.author.id);
+          chains[channelID].messages.push(message.content);
+          let dataString = JSON.stringify(chains);
+          fs.writeFileSync('chains.json', dataString);
+          break;
+        }
+      }
+
+      //Saving messages
+      chains[channelID].authors.push(message.author.id);
+      chains[channelID].messages.push(message.content);
+      let dataString = JSON.stringify(chains);
+      fs.writeFileSync('chains.json', dataString);
+
+      if (!chains[channelID].authors.includes('566494718549164043')){
+        if (chains[channelID].messages.length == 2){
+          if (Math.random() < 0.2){
+            message.channel.send(chains[channelID].messages[Math.floor(Math.random()*(chains[channelID].messages.length))]);
+          }
+        } else if (chains[channelID].messages.length == 3){
+          if (Math.random() < 0.8){
+            message.channel.send(chains[channelID].messages[Math.floor(Math.random()*(chains[channelID].messages.length))]);
+          }
+        } else if (chains[channelID].messages.length >= 4){
+          message.channel.send(chains[channelID].messages[Math.floor(Math.random()*(chains[channelID].messages.length))]);
+        }
+      }
+    }
   }
 
   //Ignoring messages from other bots or Alfred himself
-  if(message.author.bot){
+  if (message.author.bot){
     return;
   }
 
   //#General Reactions
-  if(message.channel.name === 'general'){
+  if (message.channel.name === 'general' && message.content.length < 75){
     var messageText = message.content.toLowerCase();
     if(messageText.includes('morning') && !messageText.includes('?') && !messageText.includes('hope') && (messageText.includes(' all') || messageText.includes(`y'all`) || messageText.includes('everyone') || messageText.includes('everybody') || messageText.includes('guys') || messageText.includes('dreamers') || messageText.includes('friends')) && messageText.length < 75){
       message.react('🌞');
       return;
     }
 
-    if((messageText.includes('goodnight') || messageText.includes('good night')) && !messageText.includes('?') && !messageText.includes('hope') && (messageText.includes(' all') || messageText.includes(`y'all`) || messageText.includes('everyone') || messageText.includes('everybody') || messageText.includes('guys') || messageText.includes('dreamers') || messageText.includes('friends')) && messageText.length < 75){
+    if ((messageText.includes('goodnight') || messageText.includes('good night')) && !messageText.includes('?') && !messageText.includes('hope') && (messageText.includes(' all') || messageText.includes(`y'all`) || messageText.includes('everyone') || messageText.includes('everybody') || messageText.includes('guys') || messageText.includes('dreamers') || messageText.includes('friends')) && messageText.length < 75){
       message.react('🌙');
       return;
     }
 
-    if(messageText.includes('starting') && (messageText.includes('pom') || messageText.includes('round')) && !messageText.includes('?')){
-      message.react('573727844782309377')
+    if (messageText.includes('starting') && (messageText.includes('pom') || messageText.includes('round')) && !messageText.includes('?')){
+      message.react('573727844782309377');
+      return;
     }
   }
 
-  //Auto-Chain completion
-  if(msglog1 == msglog2 && msglog2 == message.content && !chainParticipation){
-    message.channel.send(message.content);
-    chainParticipation = true;
-  }
-
-  if (msglog1 === '' && !message.content.startsWith(prefix)){
-    msglog1 = message.content;
-  } else if (msglog1 && msglog2 === '' && !message.content.startsWith(prefix)){
-    msglog2 = message.content;
-  } else if (!message.content.startsWith(prefix)){
-    msglog1 = msglog2;
-    msglog2 = message.content;
-    chainParticipation = false;
-  }
-
   //Lets Go Reactions for Ashlee
-  if(message.channel.name === '☄ashs-sky' && message.content.includes('/') && message.content.toLowerCase().includes('pomodoro') && message.content.toLowerCase().includes('count') && message.member.id == '530296951141564428'){
+  if (message.channel.name === '☄ashs-sky' && message.content.includes('/') && message.content.toLowerCase().includes('pomodoro') && message.content.toLowerCase().includes('count') && message.member.id == '530296951141564428'){
     message.react('573727844782309377');
   }
 
@@ -131,8 +181,9 @@ client.on("message", (message) => {
 
   //!test - the testing function
   if (cmd === 'test'){
-
+    message.channel.send(channelID);
   }
+
   //!raid, to give access to a shared pom timer
   if (cmd === 'raid' || cmd === 'r'){
     message.channel.send(`To join a raid with ${message.member.displayName} and the Dream Team, click here: https://cuckoo.team/thedreamtm`);
