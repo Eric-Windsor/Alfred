@@ -141,7 +141,7 @@ client.on("message", (message) => {
   }
 
   //#General Reactions
-  if (message.channel.name === 'testing' && message.content.length < 75){
+  if (message.channel.name === 'general' && message.content.length < 75){
     var messageText = message.content.toLowerCase();
     if(messageText.includes('morning') && !messageText.includes('?') && !messageText.includes('hope') && (messageText.includes(' all') || messageText.includes(`y'all`) || messageText.includes('everyone') || messageText.includes('everybody') || messageText.includes('guys') || messageText.includes('dreamers') || messageText.includes('friends')) && messageText.length < 75){
       message.react('🌞');
