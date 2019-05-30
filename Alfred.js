@@ -76,32 +76,21 @@ client.on('ready', () => {
 client.on("message", (message) => {
 
   //Deleting PokéCord Messages from channels
+  // TODO: Keep Evolution messages to keep the messages in the chat
   if(message.author.id == '365975655608745985' && message.channel.id !== '565767793627103242'){
-    message.delete(4000);
+    message.delete(5000);
     return;
   }
 
-  //Auto-Chaining Algorithm
-  if (!message.content.startsWith(prefix) && message.author.id !== '365975655608745985'){
+  //Chain Algorithm
+  if(!message.content.startsWith(prefix) && !message.content.startsWith('.pokemon') && !message.content.startsWith('.info') && message.author.id !== '365975655608745985'){
 
-    //Initialising Channel File
     var channelID = message.channel.id;
     if (!chains[channelID]){
       chains[channelID] = JSON.parse(JSON.stringify(chain));
-      let dataString = JSON.stringify(chains);
-      fs.writeFileSync('chains.json', dataString);
     }
 
     if (chains[channelID].authors.includes(message.author.id)){
-      for (var num = 0; num < chains[channelID].messages.length; num++){
-        if (message.content.toLowerCase() === chains[channelID].messages[num].toLowerCase()){
-          chains[channelID].authors.length = 0;
-          chains[channelID].messages.length = 0;
-          let dataString = JSON.stringify(chains);
-          fs.writeFileSync('chains.json', dataString);
-          return;
-        }
-      }
       chains[channelID].authors.length = 0;
       chains[channelID].messages.length = 0;
       chains[channelID].authors.push(message.author.id);
@@ -109,33 +98,38 @@ client.on("message", (message) => {
       let dataString = JSON.stringify(chains);
       fs.writeFileSync('chains.json', dataString);
     } else {
-      for (var num = 0; num < chains[channelID].messages.length; num++){
-        if (message.content.toLowerCase() === chains[channelID].messages[num].toLowerCase()){
+      if (chains[channelID].messages.length == 0){
+        chains[channelID].authors.push(message.author.id);
+        chains[channelID].messages.push(message.content);
+        let dataString = JSON.stringify(chains);
+        fs.writeFileSync('chains.json', dataString);
+      } else {
+        if (message.content.toLowerCase() === chains[channelID].messages[chains[channelID].messages.length - 1].toLowerCase()){
           chains[channelID].authors.push(message.author.id);
           chains[channelID].messages.push(message.content);
           let dataString = JSON.stringify(chains);
           fs.writeFileSync('chains.json', dataString);
-          break;
+        } else {
+          chains[channelID].authors.length = 0;
+          chains[channelID].messages.length = 0;
+          chains[channelID].authors.push(message.author.id);
+          chains[channelID].messages.push(message.content);
+          let dataString = JSON.stringify(chains);
+          fs.writeFileSync('chains.json', dataString);
         }
-      }
 
-      //Saving messages
-      chains[channelID].authors.push(message.author.id);
-      chains[channelID].messages.push(message.content);
-      let dataString = JSON.stringify(chains);
-      fs.writeFileSync('chains.json', dataString);
-
-      if (!chains[channelID].authors.includes('566494718549164043')){
-        if (chains[channelID].messages.length == 2){
-          if (Math.random() < 0.2){
+        if (!chains[channelID].authors.includes('566494718549164043')){
+          if (chains[channelID].messages.length == 2){
+            if (Math.random() < 0.15){
+              message.channel.send(chains[channelID].messages[Math.floor(Math.random()*(chains[channelID].messages.length))]);
+            }
+          } else if (chains[channelID].messages.length == 3){
+            if (Math.random() < 0.85){
+              message.channel.send(chains[channelID].messages[Math.floor(Math.random()*(chains[channelID].messages.length))]);
+            }
+          } else if (chains[channelID].messages.length >= 4){
             message.channel.send(chains[channelID].messages[Math.floor(Math.random()*(chains[channelID].messages.length))]);
           }
-        } else if (chains[channelID].messages.length == 3){
-          if (Math.random() < 0.8){
-            message.channel.send(chains[channelID].messages[Math.floor(Math.random()*(chains[channelID].messages.length))]);
-          }
-        } else if (chains[channelID].messages.length >= 4){
-          message.channel.send(chains[channelID].messages[Math.floor(Math.random()*(chains[channelID].messages.length))]);
         }
       }
     }
@@ -147,7 +141,7 @@ client.on("message", (message) => {
   }
 
   //#General Reactions
-  if (message.channel.name === 'general' && message.content.length < 75){
+  if (message.channel.name === 'testing' && message.content.length < 75){
     var messageText = message.content.toLowerCase();
     if(messageText.includes('morning') && !messageText.includes('?') && !messageText.includes('hope') && (messageText.includes(' all') || messageText.includes(`y'all`) || messageText.includes('everyone') || messageText.includes('everybody') || messageText.includes('guys') || messageText.includes('dreamers') || messageText.includes('friends')) && messageText.length < 75){
       message.react('🌞');
@@ -181,7 +175,8 @@ client.on("message", (message) => {
 
   //!test - the testing function
   if (cmd === 'test'){
-    message.channel.send(channelID);
+    message.channel.send(message.channel.messages.array.toString());
+    //message.channel.send(channelID);
   }
 
   //!raid, to give access to a shared pom timer
