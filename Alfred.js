@@ -76,14 +76,13 @@ client.on('ready', () => {
 client.on("message", (message) => {
 
   //Deleting PokéCord Messages from channels
-  // TODO: Keep Evolution messages to keep the messages in the chat
-  if(message.author.id == '365975655608745985' && message.channel.id !== '565767793627103242'){
+  if(message.author.id == '365975655608745985' && message.channel.id !== '565767793627103242' && !message.content.includes('evolving')){
     message.delete(5000);
     return;
   }
 
-  //Chain Algorithm
-  if(!message.content.startsWith(prefix) && !message.content.startsWith('.pokemon') && !message.content.startsWith('.info') && message.author.id !== '365975655608745985'){
+  //Auto-Chain Algorithm
+  if(!message.content.startsWith(prefix) && !message.content.startsWith('.pokemon') && !message.content.startsWith('.info') && !message.content.startsWith('.catch') && message.author.id !== '365975655608745985'){
 
     var channelID = message.channel.id;
     if (!chains[channelID]){
@@ -175,8 +174,7 @@ client.on("message", (message) => {
 
   //!test - the testing function
   if (cmd === 'test'){
-    message.channel.send(message.channel.messages.array.toString());
-    //message.channel.send(channelID);
+
   }
 
   //!raid, to give access to a shared pom timer
@@ -200,6 +198,22 @@ client.on("message", (message) => {
 
     var select = Math.floor(Math.random()*option.length);
     message.channel.send(`By decree of <@566494718549164043>,\n\n**${option[select]}.**`);
+  }
+
+  //!dice, to let you roll a dice that has however many sides you want
+  if (cmd === 'dice'){
+    if(!args[0]){
+      message.channel.send(':x: **Error:** Use `!dice <number>` e.g. `!dice 6` to use this command.');
+      return;
+    }
+
+    if(!Number.isInteger(parseInt(args[0]))){
+      message.channel.send(':x: **Error:** Incorrect Syntax. Please make sure you enter a number properly, `!dice 6`');
+      return;
+    }
+
+    var roll = Math.ceil(Math.random()*(parseInt(args[0])));
+    message.channel.send(`${message.author} rolls their ${parseInt(args[0])}-sided die...\n\n**${roll}!**`);
   }
 
   //!search, the google search command
