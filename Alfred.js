@@ -77,7 +77,7 @@ client.on("message", (message) => {
 
   //Deleting PokéCord Messages from channels
   if(message.author.id == '365975655608745985' && message.channel.id !== '565767793627103242' && !message.content.includes('evolving')){
-    message.delete(5000);
+    message.delete(4200);
     return;
   }
 
@@ -140,7 +140,7 @@ client.on("message", (message) => {
   }
 
   //#General Reactions
-  if (message.channel.name === 'general' && message.content.length < 75){
+  if (message.channel.id === '565753674530553869' && message.content.length < 75){
     var messageText = message.content.toLowerCase();
     if(messageText.includes('morning') && !messageText.includes('?') && !messageText.includes('hope') && (messageText.includes(' all') || messageText.includes(`y'all`) || messageText.includes('everyone') || messageText.includes('everybody') || messageText.includes('guys') || messageText.includes('dreamers') || messageText.includes('friends')) && messageText.length < 75){
       message.react('🌞');
@@ -160,6 +160,11 @@ client.on("message", (message) => {
 
   //Lets Go Reactions for Ashlee
   if (message.channel.name === '☄ashs-sky' && message.content.includes('/') && message.content.toLowerCase().includes('pomodoro') && message.content.toLowerCase().includes('count') && message.member.id == '530296951141564428'){
+    message.react('573727844782309377');
+  }
+
+  //Lets Go Reactions for Eric
+  if (message.channel.name === '🍀erics-field' && message.content.includes('/') && message.content.toLowerCase().includes('pomodoro') && message.content.toLowerCase().includes('count') && message.member.id == '227944612650549260'){
     message.react('573727844782309377');
   }
 
